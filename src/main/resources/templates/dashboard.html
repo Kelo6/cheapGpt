@@ -2,41 +2,428 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>仪表盘</title>
+    <title>CheapGPT 企业账号池 - 仪表盘</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { font-family: Arial, sans-serif; padding: 24px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { border-bottom: 1px solid #eee; padding: 8px; text-align: left; }
-        .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: fadeInDown 0.6s ease-out;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 2.2em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+            border: 2px solid rgba(108, 117, 125, 0.2);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(108, 117, 125, 0.2);
+            transform: translateY(-1px);
+        }
+        
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+        
+        .content-header {
+            margin-bottom: 30px;
+        }
+        
+        .content-header h2 {
+            color: #333;
+            font-size: 1.8em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .content-header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid rgba(102, 126, 234, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-weight: 500;
+            font-size: 1.1em;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .table thead th {
+            color: white;
+            font-weight: 600;
+            padding: 20px 25px;
+            text-align: left;
+            font-size: 1em;
+        }
+        
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+        
+        .table tbody tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+        
+        .table tbody td {
+            padding: 20px 25px;
+            border-bottom: 1px solid #f1f3f4;
+            color: #333;
+            font-size: 0.95em;
+        }
+        
+        .table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            gap: 5px;
+        }
+        
+        .status-enabled {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+        
+        .status-disabled {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+        
+        .id-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        
+        .key-code {
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            color: #495057;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+        
+        .shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        .shape:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+        
+        .shape:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 70%;
+            right: 5%;
+            animation-delay: 3s;
+        }
+        
+        .shape:nth-child(3) {
+            width: 80px;
+            height: 80px;
+            bottom: 10%;
+            left: 15%;
+            animation-delay: 6s;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-30px) rotate(180deg);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .header-actions {
+                justify-content: center;
+            }
+            
+            .table-container {
+                overflow-x: auto;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
     </style>
 </head>
 <body>
-<div class="top">
-    <h2>子账号列表</h2>
-    <div>
-        <a href="/chat" style="margin-right: 15px; padding: 8px 16px; background: #2c3e50; color: white; text-decoration: none; border-radius: 4px;">开始聊天</a>
-        <a href="/logout">退出登录</a>
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
     </div>
-  </div>
-<table>
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Key</th>
-        <th>启用</th>
-        <th>并发上限</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="sa : ${subAccounts}">
-        <td th:text="${sa.id}">1</td>
-        <td th:text="${sa.key}">key</td>
-        <td th:text="${sa.enabled}">true</td>
-        <td th:text="${sa.concurrentLimit}">5</td>
-    </tr>
-    </tbody>
-  </table>
+    
+    <div class="container">
+        <div class="header">
+            <h1>
+                🤖 CheapGPT 仪表盘
+            </h1>
+            <div class="header-actions">
+                <a href="/chat" class="btn btn-primary">
+                    💬 开始聊天
+                </a>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-secondary">
+                        🚪 退出登录
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="content-header">
+                <h2>
+                    📊 子账号池管理
+                </h2>
+                <p>管理和监控您的 ChatGPT 企业账号池中的所有子账号</p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" th:text="${#lists.size(subAccounts)}">0</div>
+                    <div class="stat-label">总子账号数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">1</div>
+                    <div class="stat-label">启用账号数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">总并发容量</div>
+                </div>
+            </div>
+            
+            <div class="table-container" th:if="${not #lists.isEmpty(subAccounts)}">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>账号ID</th>
+                            <th>子账号密钥</th>
+                            <th>状态</th>
+                            <th>并发限制</th>
+                            <th>企业账号</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="sa : ${subAccounts}">
+                            <td>
+                                <span class="id-badge" th:text="'#' + ${sa.id}">#1</span>
+                            </td>
+                            <td>
+                                <code class="key-code" th:text="${sa.key}">sub-1</code>
+                            </td>
+                            <td>
+                                <span th:class="${sa.enabled} ? 'status-badge status-enabled' : 'status-badge status-disabled'">
+                                    <span th:if="${sa.enabled}">✅ 启用</span>
+                                    <span th:unless="${sa.enabled}">❌ 禁用</span>
+                                </span>
+                            </td>
+                            <td>
+                                <strong th:text="${sa.concurrentLimit}">5</strong> 并发
+                            </td>
+                            <td>
+                                <span th:text="${sa.enterpriseAccount.name}">ent-1</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="empty-state" th:if="${#lists.isEmpty(subAccounts)}">
+                <div class="empty-state-icon">📭</div>
+                <h3>暂无子账号</h3>
+                <p>您的账号池中还没有配置任何子账号</p>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 
