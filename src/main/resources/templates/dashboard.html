@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>仪表盘</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; padding: 24px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border-bottom: 1px solid #eee; padding: 8px; text-align: left; }
+        .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    </style>
+</head>
+<body>
+<div class="top">
+    <h2>子账号列表</h2>
+    <div>
+        <a href="/chat" style="margin-right: 15px; padding: 8px 16px; background: #2c3e50; color: white; text-decoration: none; border-radius: 4px;">开始聊天</a>
+        <a href="/logout">退出登录</a>
+    </div>
+  </div>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Key</th>
+        <th>启用</th>
+        <th>并发上限</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="sa : ${subAccounts}">
+        <td th:text="${sa.id}">1</td>
+        <td th:text="${sa.key}">key</td>
+        <td th:text="${sa.enabled}">true</td>
+        <td th:text="${sa.concurrentLimit}">5</td>
+    </tr>
+    </tbody>
+  </table>
+</body>
+</html>
+
+
