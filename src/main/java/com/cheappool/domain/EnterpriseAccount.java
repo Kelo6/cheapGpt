@@ -29,6 +29,12 @@ public class EnterpriseAccount {
     @Column(length = 2048)
     private String credential;
 
+    /**
+     * 企业账号的唯一 Key，用于对接上游或内部标识
+     */
+    @Column(name = "ent_key", length = 100, unique = true, nullable = false)
+    private String enterpriseKey;
+
     @Column(nullable = false)
     private boolean enabled;
 

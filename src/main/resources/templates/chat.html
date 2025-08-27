@@ -69,6 +69,39 @@
             font-weight: 500;
         }
         
+        .credit-info {
+            margin-top: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .credit-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 100px;
+        }
+        
+        .credit-label {
+            font-size: 0.85em;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 5px;
+        }
+        
+        .credit-value {
+            font-size: 0.95em;
+            font-weight: 600;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+        
         .nav-links {
             display: flex;
             gap: 20px;
@@ -379,6 +412,24 @@
                         ⚠️ 暂无可用子账号
                     </span>
                 </div>
+                <div class="credit-info" th:if="${subAccount}">
+                    <div class="credit-item">
+                        <span class="credit-label">💰 积分余额:</span>
+                        <span class="credit-value" th:text="${creditsRemaining + '/' + creditsTotal}">0/100</span>
+                    </div>
+                    <div class="credit-item">
+                        <span class="credit-label">📊 已使用:</span>
+                        <span class="credit-value" th:text="${creditsUsed}">0</span>
+                    </div>
+                    <div class="credit-item">
+                        <span class="credit-label">💸 每次消费:</span>
+                        <span class="credit-value" th:text="${costPerMessage + ' 积分'}">5 积分</span>
+                    </div>
+                    <div class="credit-item">
+                        <span class="credit-label">⏰ 窗口时间:</span>
+                        <span class="credit-value" th:text="${windowHours + ' 小时'}">1 小时</span>
+                    </div>
+                </div>
             </div>
             <div class="nav-links">
                 <span th:text="'👋 ' + ${username}">用户</span>
@@ -457,6 +508,8 @@
             .then(data => {
                 if (data.success) {
                     addMessage('bot', data.response);
+                    // 更新积分显示
+                    updateCreditDisplay(data.creditsUsed, data.creditsRemaining, data.creditsTotal);
                 } else {
                     addMessage('bot', '❌ 抱歉，处理您的请求时出现了错误：' + (data.error || '未知错误'));
                 }
@@ -488,6 +541,30 @@
             
             chatArea.appendChild(messageDiv);
             chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function updateCreditDisplay(used, remaining, total) {
+            // 更新积分余额
+            const remainingElement = document.querySelector('.credit-info .credit-item:nth-child(1) .credit-value');
+            if (remainingElement) {
+                remainingElement.textContent = remaining + '/' + total;
+            }
+            
+            // 更新已使用积分
+            const usedElement = document.querySelector('.credit-info .credit-item:nth-child(2) .credit-value');
+            if (usedElement) {
+                usedElement.textContent = used;
+            }
+            
+            // 添加动画效果提示用户积分已更新
+            const creditInfo = document.querySelector('.credit-info');
+            if (creditInfo) {
+                creditInfo.style.transform = 'scale(1.02)';
+                creditInfo.style.transition = 'transform 0.2s ease';
+                setTimeout(() => {
+                    creditInfo.style.transform = 'scale(1)';
+                }, 200);
+            }
         }
 
         // 页面加载完成后聚焦输入框

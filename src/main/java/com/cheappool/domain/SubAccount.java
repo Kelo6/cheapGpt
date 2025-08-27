@@ -36,6 +36,24 @@ public class SubAccount {
     @Column(nullable = false)
     private int concurrentLimit;
 
+    /**
+     * 时间窗口内可用的最大积分（配额上限）
+     */
+    @Column(nullable = false)
+    private int windowLimit;
+
+    /**
+     * 时间窗口大小（秒）
+     */
+    @Column(nullable = false)
+    private int windowSeconds;
+
+    /**
+     * 每次对话消耗的积分
+     */
+    @Column(nullable = false)
+    private int costPerMessage;
+
     @Column(nullable = false)
     private OffsetDateTime createdAt;
 

@@ -43,6 +43,7 @@ public class DataInitializer {
                         .name("ent-1")
                         .organizationId("org-001")
                         .credential("placeholder")
+                        .enterpriseKey("ent-key-001")
                         .enabled(true)
                         .note("demo enterprise")
                         .createdAt(now)
@@ -57,6 +58,9 @@ public class DataInitializer {
                         .credential("placeholder")
                         .enabled(true)
                         .concurrentLimit(5)
+                        .windowLimit(100)
+                        .windowSeconds(3600)
+                        .costPerMessage(5)
                         .createdAt(now)
                         .updatedAt(now)
                         .build();
